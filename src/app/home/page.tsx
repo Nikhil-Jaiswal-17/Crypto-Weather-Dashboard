@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/tooltip"; // Tooltip import
 import { Sun, DollarSign, Newspaper } from "lucide-react";
 
 export default function DashboardPage() {
@@ -40,9 +40,12 @@ export default function DashboardPage() {
             {/* Card with hover effect */}
             <div className="relative group flex flex-col items-center justify-center p-6 bg-white shadow-lg rounded-lg hover:shadow-2xl hover:scale-105 hover:bg-gradient-to-r from-blue-200 via-white to-blue-300 transition-transform duration-300 cursor-pointer h-56">
               {/* Icon with Tooltip */}
-              <Tooltip content={`Click to explore ${item.title.toLowerCase()}!`}>
+              <Tooltip>
                 <span className="text-6xl mb-4 group-hover:animate-bounce">
                   {item.icon}
+                </span>
+                <span className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Click to explore {item.title.toLowerCase()}!
                 </span>
               </Tooltip>
 
