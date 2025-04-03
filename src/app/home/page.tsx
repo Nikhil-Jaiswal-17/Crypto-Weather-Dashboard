@@ -27,7 +27,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen">
       {/* Page Title */}
       <h1 className="text-center text-3xl font-bold mb-8 text-gray-800">
         Welcome to Your Dashboard
@@ -39,8 +39,12 @@ export default function DashboardPage() {
           <Link key={item.title} href={item.link}>
             {/* Card with hover effect */}
             <div className="relative group flex flex-col items-center justify-center p-6 bg-white shadow-lg rounded-lg hover:shadow-2xl hover:scale-105 hover:bg-gradient-to-r from-blue-200 via-white to-blue-300 transition-transform duration-300 cursor-pointer h-56">
-              {/* Icon */}
-              <span className="text-6xl mb-4 group-hover:animate-bounce">{item.icon}</span>
+              {/* Icon with Tooltip */}
+              <Tooltip content={`Click to explore ${item.title.toLowerCase()}!`}>
+                <span className="text-6xl mb-4 group-hover:animate-bounce">
+                  {item.icon}
+                </span>
+              </Tooltip>
 
               {/* Title */}
               <h2 className="text-xl font-semibold text-gray-800 group-hover:text-blue-800">
@@ -51,29 +55,25 @@ export default function DashboardPage() {
               <p className="text-sm text-gray-500 mt-2 text-center group-hover:text-gray-700">
                 {item.description}
               </p>
-
-              {/* Tooltip */}
-              <Tooltip className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                Click to explore {item.title.toLowerCase()}!
-              </Tooltip>
             </div>
           </Link>
         ))}
       </div>
 
-     {/* Footer Section */}
-     <footer className="mt-12 p-6 bg-white shadow-lg rounded-lg">
+      {/* Footer Section */}
+      <footer className="mt-12 p-6 bg-white shadow-lg rounded-lg">
         <h2 className="text-xl font-semibold text-gray-800 text-center mb-4">
           Your Ultimate Gateway to Information 🌟
         </h2>
         <p className="text-gray-500 text-center mt-4 mb-6">
-         Welcome to a world of insights and possibilities! Discover the latest weather updates to plan your day with confidence, stay ahead in the financial game with live cryptocurrency trends, and stay informed about breaking news from around the globe. Your dashboard is designed to make your life simpler, smarter, and more connected.        </p>
+          Welcome to a world of insights and possibilities! Discover the latest weather updates to plan your day with confidence, stay ahead in the financial game with live cryptocurrency trends, and stay informed about breaking news from around the globe. Your dashboard is designed to make your life simpler, smarter, and more connected.
+        </p>
         <p className="text-gray-500 text-center mt-4 mb-6">
           Whether you are tracking the latest trends, staying informed on global news, or checking the forecast for your next big day, we have got you covered. Empower yourself with a world of information at your fingertips.
         </p>
         <div className="text-center">
           <p className="text-sm font-medium text-gray-700">
-          Explore, engage, and empower yourself—everything you need is just a click away!
+            Explore, engage, and empower yourself—everything you need is just a click away!
           </p>
         </div>
       </footer>
