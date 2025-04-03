@@ -1,10 +1,8 @@
 // app/layout.tsx
-// import ServerLayout from "./ServerLayout";
 import ClientLayout from "./ClientLayout";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import type { Metadata } from "next";
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,8 +24,17 @@ const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    // <ServerLayout>
-      <ClientLayout>{children}</ClientLayout>
-    // </ServerLayout>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <head>
+        <meta name="description" content={metadata.description} />
+        <meta name="keywords" content={metadata.keywords} />
+        <meta name="author" content={metadata.authors[0].name} />
+        <link rel="icon" href={metadata.icons} />
+        <title>{metadata.title}</title>
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <ClientLayout>{children}</ClientLayout>
+      </body>
+    </html>
   );
 }
