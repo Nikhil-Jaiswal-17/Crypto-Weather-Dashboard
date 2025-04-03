@@ -69,7 +69,7 @@ export default function DashboardPage() {
         <p className="text-gray-500 text-center mt-4 mb-6">
          Welcome to a world of insights and possibilities! Discover the latest weather updates to plan your day with confidence, stay ahead in the financial game with live cryptocurrency trends, and stay informed about breaking news from around the globe. Your dashboard is designed to make your life simpler, smarter, and more connected.        </p>
         <p className="text-gray-500 text-center mt-4 mb-6">
-          Whether you're tracking the latest trends, staying informed on global news, or checking the forecast for your next big day, we’ve got you covered. Empower yourself with a world of information at your fingertips.
+          Whether you are tracking the latest trends, staying informed on global news, or checking the forecast for your next big day, we have got you covered. Empower yourself with a world of information at your fingertips.
         </p>
         <div className="text-center">
           <p className="text-sm font-medium text-gray-700">
