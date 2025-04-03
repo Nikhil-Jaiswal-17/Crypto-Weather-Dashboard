@@ -1,11 +1,10 @@
-"use client"
-import type { Metadata } from "next";
+// app/layout.tsx
+// import ServerLayout from "./ServerLayout";
+import ClientLayout from "./ClientLayout";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/sidebar";
-// import { ThemeProvider } from "@/components/theme-provider"; // Light/Dark Mode Support
-import { Provider } from "react-redux";
-import { store } from "@/redux/store";
+import type { Metadata } from "next";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,28 +16,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// export const metadata: Metadata = {
-//   title: "Dashboard App",
-//   description: "A modern dashboard with fixed sidebar",
-// };
+const metadata: Metadata = {
+  title: "CryptoWeather Nexus - Real-time Dashboard",
+  description: "Track live cryptocurrency prices, weather updates, and the latest crypto news in one modern dashboard.",
+  keywords: "crypto, cryptocurrency, weather, bitcoin, ethereum, crypto news, live prices, dashboard",
+  authors: [{ name: "Nikhil Jaiswal", url: "https://yourportfolio.com" }],
+  icons: "/favicon.png",
+};
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Provider store={store}>
-    <html lang="en">
-      <body className="flex h-screen w-screen overflow-hidden bg-gray-50 text-gray-900">
-        {/* <ThemeProvider> */}
-          {/* Fixed Sidebar */}
-          <div className="w-64 h-full bg-white border-r shadow-md fixed top-0 left-0 flex flex-col">
-            <Sidebar />
-          </div>
-          {/* Main Content */}
-          <main className="flex-1 ml-64 p-8 overflow-auto">{children}</main>
-        {/* </ThemeProvider> */}
-      </body>
-    </html>
-    </Provider>
+    // <ServerLayout>
+      <ClientLayout>{children}</ClientLayout>
+    // </ServerLayout>
   );
 }
