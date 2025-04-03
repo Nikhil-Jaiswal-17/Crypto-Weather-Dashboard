@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 const metadata: Metadata = {
   title: "CryptoWeather Nexus - Real-time Dashboard",
   description: "Track live cryptocurrency prices, weather updates, and the latest crypto news in one modern dashboard.",
-  keywords: "crypto, cryptocurrency, weather, bitcoin, ethereum, crypto news, live prices, dashboard",
+  keywords: ["crypto", "cryptocurrency", "weather", "bitcoin", "ethereum", "crypto news", "live prices", "dashboard"], // example with array
   authors: [{ name: "Nikhil Jaiswal", url: "https://yourportfolio.com" }],
   icons: "/favicon.png",
 };
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <meta name="description" content={metadata.description ?? "Default description"} />
-        <meta name="keywords" content={metadata.keywords} />
+        <meta name="keywords" content={Array.isArray(metadata.keywords) ? metadata.keywords.join(", ") : metadata.keywords ?? "default, keywords"} />
         <meta name="author" content={metadata.authors[0].name} />
         <link rel="icon" href={metadata.icons} />
         <title>{metadata.title}</title>
