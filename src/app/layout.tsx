@@ -25,6 +25,7 @@ const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const authorName = Array.isArray(metadata.authors) ? metadata.authors[0]?.name : metadata.authors?.name;
   const iconHref = typeof metadata.icons === "string" ? metadata.icons : "/default-favicon.png"; // Provide fallback icon URL
+  const title = metadata.title ?? "Default Title";  // Provide fallback title
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <meta name="author" content={authorName} />
         )}
         <link rel="icon" href={iconHref} />
-        <title>{metadata.title}</title>
+        <title>{title}</title>  {/* Ensure title is always a string */}
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ClientLayout>{children}</ClientLayout>
