@@ -26,7 +26,7 @@ const CityWeatherDetails = () => {
   const router = useRouter();
   const [cities, setCities] = useState([]); // List of cities from localStorage
   const [selectedCity, setSelectedCity] = useState(""); // Currently selected city
-  const [weatherData, setWeatherData] = useState(null); // Weather data for the selected city
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null); // Weather data for the selected city
 
   useEffect(() => {
     // Fetch cities from localStorage
@@ -43,7 +43,7 @@ const CityWeatherDetails = () => {
       const fetchWeatherData = async () => {
         try {
           const res = await fetch(`${WEATHER_BASE_URL}?q=${selectedCity}&appid=${WEATHER_API_KEY}&units=metric`);
-          const data = await res.json();
+          const data: WeatherData = await res.json();
           setWeatherData(data);
         } catch (error) {
           console.error("Error fetching weather data:", error);
