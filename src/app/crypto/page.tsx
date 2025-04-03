@@ -8,6 +8,19 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
+/ Define the type for the cryptocurrency data (Coin)
+10  interface Coin {
+11    id: string;
+12    name: string;
+13    image: string;
+14    current_price: number;
+15    price_change_percentage_24h: number;
+16    market_cap: number;
+17    sparkline_in_7d: {
+18      price: number[];
+19    };
+20  }
+
 const CryptoDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { data: cryptoData, loading, error } = useSelector((state: RootState) => state.crypto);
@@ -23,7 +36,7 @@ const CryptoDashboard = () => {
     <div className="max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Cryptocurrency Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {cryptoData.map((coin) => (
+        {cryptoData.map((coin: Coin) => (
           <Card key={coin.id} className="shadow-md">
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
@@ -57,7 +70,7 @@ const CryptoDashboard = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {cryptoData.map((coin) => (
+         {cryptoData.map((coin: Coin) => (
             <TableRow key={coin.id}>
               <TableCell className="flex items-center gap-2">
                 <img src={coin.image} alt={coin.name} className="w-5 h-5" /> {coin.name}
