@@ -9,17 +9,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 // Define the type for the cryptocurrency data (Coin)
-10  interface Coin {
-11    id: string;
-12    name: string;
-13    image: string;
-14    current_price: number;
-15    price_change_percentage_24h: number;
-16    market_cap: number;
-17    sparkline_in_7d: {
-18      price: number[];
-19    };
-20  }
+interface Coin {
+  id: string;
+  name: string;
+  image: string;
+  current_price: number;
+  price_change_percentage_24h: number;
+  market_cap: number;
+  sparkline_in_7d: {
+    price: number[];
+  };
+}
 
 const CryptoDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -70,7 +70,7 @@ const CryptoDashboard = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-         {cryptoData.map((coin: Coin) => (
+          {cryptoData.map((coin: Coin) => (
             <TableRow key={coin.id}>
               <TableCell className="flex items-center gap-2">
                 <img src={coin.image} alt={coin.name} className="w-5 h-5" /> {coin.name}
