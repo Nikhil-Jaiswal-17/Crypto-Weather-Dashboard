@@ -40,7 +40,7 @@ const CityWeatherDetails = () => {
       // Redirect to Weather Page for adding new cities
       router.push("/weather"); // Replace '/weather' with your actual route
     }
-  }, [selectedCity]);
+  }, [selectedCity, router]); // Include 'router' as a dependency here
 
   // Prepare data for charts
   const chartData = weatherData
