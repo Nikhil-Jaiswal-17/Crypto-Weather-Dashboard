@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Trash, Sun, DollarSign } from "lucide-react";
 
 const FavoritesSection = () => {
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState<any[]>([]); // Updated to accept any type for now
 
   // Load favorites from localStorage on component mount
   useEffect(() => {
-    const savedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setFavorites(savedFavorites);
+    const savedFavorites = localStorage.getItem("favorites");
+    const parsedFavorites = savedFavorites ? JSON.parse(savedFavorites) : []; // Safe fallback to empty array
+    setFavorites(parsedFavorites);
   }, []);
 
   // Save favorites to localStorage whenever it changes
@@ -20,7 +21,7 @@ const FavoritesSection = () => {
   }, [favorites]);
 
   // Remove a favorite item
-  const removeFavorite = (id) => {
+  const removeFavorite = (id: string) => {
     setFavorites(favorites.filter((item) => item.id !== id));
   };
 
@@ -29,8 +30,8 @@ const FavoritesSection = () => {
       <h1 className="text-3xl font-bold mb-6">My Favorites</h1>
       {favorites.length === 0 ? (
         <>
-         <p className="text-gray-700">You have no favorites yet. Add some from the Weather or Crypto sections!</p>
-         <p className="text-gray-400 font-bold mt-10">Work in Progress ! We are building something amazing for you. Please check back soon! </p>
+          <p className="text-gray-700">You have no favorites yet. Add some from the Weather or Crypto sections!</p>
+          <p className="text-gray-400 font-bold mt-10">Work in Progress! We are building something amazing for you. Please check back soon! </p>
         </>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
