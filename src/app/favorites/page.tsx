@@ -5,13 +5,27 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Trash, Sun, DollarSign } from "lucide-react";
 
+// Define the type for a favorite item
+type FavoriteItem = {
+  id: string;
+  name: string;
+  type: "weather" | "crypto"; // type can be either 'weather' or 'crypto'
+  details: {
+    temp?: number; // Only used if type is 'weather'
+    humidity?: number; // Only used if type is 'weather'
+    price?: number; // Only used if type is 'crypto'
+    change?: number; // Only used if type is 'crypto'
+  };
+};
+
 const FavoritesSection = () => {
-  const [favorites, setFavorites] = useState<any[]>([]); // Updated to accept any type for now
+  // Now we specify the type of favorites as an array of FavoriteItem
+  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
 
   // Load favorites from localStorage on component mount
   useEffect(() => {
     const savedFavorites = localStorage.getItem("favorites");
-    const parsedFavorites = savedFavorites ? JSON.parse(savedFavorites) : []; // Safe fallback to empty array
+    const parsedFavorites: FavoriteItem[] = savedFavorites ? JSON.parse(savedFavorites) : []; // Safe fallback to empty array
     setFavorites(parsedFavorites);
   }, []);
 
