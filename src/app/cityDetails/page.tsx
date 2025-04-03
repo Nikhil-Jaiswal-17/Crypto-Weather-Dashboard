@@ -8,6 +8,20 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, L
 const WEATHER_API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
 const WEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
 
+// Define the interface for weather data
+interface WeatherData {
+  main: {
+    temp: number;
+    humidity: number;
+    pressure: number;
+  };
+  wind: {
+    speed: number;
+  };
+  visibility: number;
+}
+
+
 const CityWeatherDetails = () => {
   const router = useRouter();
   const [cities, setCities] = useState([]); // List of cities from localStorage
