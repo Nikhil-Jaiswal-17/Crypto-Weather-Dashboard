@@ -42,16 +42,16 @@ const CityWeatherDetails = () => {
     }
   }, [selectedCity, router]); // Include 'router' as a dependency here
 
-  // Prepare data for charts
-  const chartData = weatherData
-    ? [
-        { name: "Temperature", value: weatherData.main.temp },
-        { name: "Humidity", value: weatherData.main.humidity },
-        { name: "Pressure", value: weatherData.main.pressure },
-        { name: "Wind Speed", value: weatherData.wind.speed },
-        { name: "Visibility", value: (weatherData.visibility / 1000).toFixed(1) },
-      ]
-    : [];
+  // // Prepare data for charts
+  // const chartData = weatherData
+  //   ? [
+  //       { name: "Temperature", value: weatherData.main.temp },
+  //       { name: "Humidity", value: weatherData.main.humidity },
+  //       { name: "Pressure", value: weatherData.main.pressure },
+  //       { name: "Wind Speed", value: weatherData.wind.speed },
+  //       { name: "Visibility", value: (weatherData.visibility / 1000).toFixed(1) },
+  //     ]
+  //   : [];
 
   // Colors for Pie Chart
   const pieColors = ["#007bff", "#00c49f", "#ffbb28", "#ff8042", "#8884d8"];
