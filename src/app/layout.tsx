@@ -1,8 +1,11 @@
+"use client"
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/sidebar";
 // import { ThemeProvider } from "@/components/theme-provider"; // Light/Dark Mode Support
+import { Provider } from "react-redux";
+import { store } from "@/redux/store";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,15 +17,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Dashboard App",
-  description: "A modern dashboard with fixed sidebar",
-};
+// export const metadata: Metadata = {
+//   title: "Dashboard App",
+//   description: "A modern dashboard with fixed sidebar",
+// };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
+    <Provider store={store}>
     <html lang="en">
       <body className="flex h-screen w-screen overflow-hidden bg-gray-50 text-gray-900">
         {/* <ThemeProvider> */}
@@ -35,5 +39,6 @@ export default function RootLayout({
         {/* </ThemeProvider> */}
       </body>
     </html>
+    </Provider>
   );
 }

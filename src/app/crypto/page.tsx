@@ -1,27 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCryptoData } from "@/redux/slices/cryptoSlice";
+import { RootState, AppDispatch } from "@/redux/store";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-const API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana&order=market_cap_desc&per_page=3&page=1&sparkline=true";
-
 const CryptoDashboard = () => {
-  const [cryptoData, setCryptoData] = useState([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const { data: cryptoData, loading, error } = useSelector((state: RootState) => state.crypto);
 
   useEffect(() => {
-    const fetchCryptoData = async () => {
-      try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        setCryptoData(data);
-      } catch (error) {
-        console.error("Error fetching crypto data:", error);
-      }
-    };
-    fetchCryptoData();
-  }, []);
+    dispatch(fetchCryptoData());
+  }, [dispatch]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="max-w-6xl mx-auto">
