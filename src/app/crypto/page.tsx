@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-/ Define the type for the cryptocurrency data (Coin)
+// Define the type for the cryptocurrency data (Coin)
 10  interface Coin {
 11    id: string;
 12    name: string;
