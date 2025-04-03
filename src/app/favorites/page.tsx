@@ -30,7 +30,7 @@ const FavoritesSection = () => {
       {favorites.length === 0 ? (
         <>
          <p className="text-gray-700">You have no favorites yet. Add some from the Weather or Crypto sections!</p>
-         <p className="text-gray-400 font-bold mt-10">Work in Progress ! We're building something amazing for you. Please check back soon! </p>
+         <p className="text-gray-400 font-bold mt-10">Work in Progress ! We are building something amazing for you. Please check back soon! </p>
         </>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
