@@ -27,6 +27,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const iconHref = typeof metadata.icons === "string" ? metadata.icons : "/default-favicon.png"; // Provide fallback icon URL
   const title = metadata.title ?? "Default Title";  // Provide fallback title
 
+  // Type assertion to ensure `title` is a string (this forces TypeScript to treat it as a string)
+  const titleString = String(title); 
+
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
@@ -36,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <meta name="author" content={authorName} />
         )}
         <link rel="icon" href={iconHref} />
-        <title>{title}</title>  {/* Ensure title is always a string */}
+        <title>{titleString}</title>  {/* Ensuring title is a string */}
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ClientLayout>{children}</ClientLayout>
