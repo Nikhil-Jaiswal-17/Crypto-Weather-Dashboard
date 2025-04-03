@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash, Plus, Search } from "lucide-react";
+import { Trash, Plus, Heart, Search } from "lucide-react"; // Added Heart icon
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { PieChart, Pie, Cell, Legend } from "recharts";
 
@@ -24,6 +24,10 @@ const WeatherPage = () => {
   const [searchResult, setSearchResult] = useState(null);
   const [backgroundImages, setBackgroundImages] = useState({});
   const [selectedCity, setSelectedCity] = useState(null);
+  const [favorites, setFavorites] = useState(() => {
+    const savedFavorites = localStorage.getItem("favorites");
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  }); // State for favorite cities
   const [currentPage, setCurrentPage] = useState(0); // For pagination
 
   const citiesPerPage = 4; // Number of cities per page
@@ -59,6 +63,10 @@ const WeatherPage = () => {
     localStorage.setItem("cities", JSON.stringify(cities));
   }, [cities]);
 
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
+
   const handleSearch = async () => {
     try {
       const res = await fetch(`${WEATHER_BASE_URL}?q=${searchQuery}&appid=${WEATHER_API_KEY}&units=metric`);
@@ -83,6 +91,12 @@ const WeatherPage = () => {
 
   const removeCity = (city) => {
     setCities(cities.filter((c) => c !== city));
+  };
+
+  const addFavorite = (city) => {
+    if (!favorites.includes(city)) {
+      setFavorites([...favorites, city]);
+    }
   };
 
   const chartData = selectedCity && weatherData[selectedCity] ? [
@@ -145,9 +159,14 @@ const WeatherPage = () => {
               <CardHeader>
                 <CardTitle className="flex justify-between items-center">
                   {city}
-                  <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeCity(city); }}>
-                    <Trash size={16} />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeCity(city); }}>
+                      <Trash size={16} />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); addFavorite(city); }}>
+                      <Heart size={16} className={favorites.includes(city) ? "text-red-500" : "text-gray-500"} />
+                    </Button>
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>

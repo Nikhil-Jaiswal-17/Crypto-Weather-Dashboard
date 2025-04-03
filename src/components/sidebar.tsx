@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"; // Import usePathname to get curr
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { HomeIcon, Cloud, DollarSign, Newspaper, User, Building } from "lucide-react";
+import { HomeIcon, Cloud, DollarSign, Newspaper, User, Building, HeartIcon } from "lucide-react";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -27,6 +27,7 @@ const Sidebar = () => {
 
         <nav className="space-y-3 flex-grow">
           <NavItem href="/home" icon={<HomeIcon size={20} />} label="Home" active={pathname === "/home"} />
+          <NavItem href="/favorites" icon={<HeartIcon size={20} />} label="Favorites" active={pathname === "/favorites"} />
           <NavItem href="/weather" icon={<Cloud size={20} />} label="Weather" active={pathname === "/weather"} />
           <NavItem href="/crypto" icon={<DollarSign size={20} />} label="Cryptocurrency" active={pathname === "/crypto"} />
           <NavItem href="/news" icon={<Newspaper size={20} />} label="News" active={pathname === "/news"} />
