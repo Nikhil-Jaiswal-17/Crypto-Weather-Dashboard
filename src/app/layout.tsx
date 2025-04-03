@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
-        <meta name="description" content={metadata.description} />
+        <meta name="description" content={metadata.description ?? "Default description"} />
         <meta name="keywords" content={metadata.keywords} />
         <meta name="author" content={metadata.authors[0].name} />
         <link rel="icon" href={metadata.icons} />
