@@ -19,12 +19,13 @@ const metadata: Metadata = {
   description: "Track live cryptocurrency prices, weather updates, and the latest crypto news in one modern dashboard.",
   keywords: ["crypto", "cryptocurrency", "weather", "bitcoin", "ethereum", "crypto news", "live prices", "dashboard"],
   authors: [{ name: "Nikhil Jaiswal", url: "https://yourportfolio.com" }],
-  icons: "/favicon.png",
+  icons: "/favicon.png", // This should be a string URL or array of Icon objects
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const authorName = Array.isArray(metadata.authors) ? metadata.authors[0]?.name : metadata.authors?.name;
-  
+  const iconHref = typeof metadata.icons === "string" ? metadata.icons : "/default-favicon.png"; // Provide fallback icon URL
+
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
@@ -33,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {authorName && (
           <meta name="author" content={authorName} />
         )}
-        <link rel="icon" href={metadata.icons} />
+        <link rel="icon" href={iconHref} />
         <title>{metadata.title}</title>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
