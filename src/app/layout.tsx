@@ -23,13 +23,15 @@ const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const authorName = Array.isArray(metadata.authors) ? metadata.authors[0]?.name : metadata.authors?.name;
+  
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <meta name="description" content={metadata.description ?? "Default description"} />
         <meta name="keywords" content={Array.isArray(metadata.keywords) ? metadata.keywords.join(", ") : metadata.keywords ?? "default, keywords"} />
-        {metadata.authors && metadata.authors[0] && (
-          <meta name="author" content={metadata.authors[0].name} />
+        {authorName && (
+          <meta name="author" content={authorName} />
         )}
         <link rel="icon" href={metadata.icons} />
         <title>{metadata.title}</title>
