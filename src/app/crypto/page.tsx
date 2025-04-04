@@ -16,7 +16,7 @@ interface Coin {
   current_price: number;
   price_change_percentage_24h: number;
   market_cap: number;
-  sparkline_in_7d: {
+  sparkline_in_7d?: {
     price: number[];
   };
 }
@@ -47,18 +47,31 @@ const CryptoDashboard = () => {
               <p><strong>Price:</strong> ${coin.current_price.toFixed(2)}</p>
               <p><strong>24h Change:</strong> {coin.price_change_percentage_24h.toFixed(2)}%</p>
               <p><strong>Market Cap:</strong> ${coin.market_cap.toLocaleString()}</p>
-              <ResponsiveContainer width="100%" height={100}>
-                <LineChart data={coin.sparkline_in_7d.price.map((price, index) => ({ time: index, price }))}>
-                  <XAxis dataKey="time" hide />
-                  <YAxis domain={[Math.min(...coin.sparkline_in_7d.price), Math.max(...coin.sparkline_in_7d.price)]} hide />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="price" stroke="#8884d8" strokeWidth={2} dot={false} />
-                </LineChart>
-              </ResponsiveContainer>
+
+              {/* Sparkline Chart (if available) */}
+              {coin.sparkline_in_7d?.price && (
+                <ResponsiveContainer width="100%" height={100}>
+                  <LineChart
+                    data={coin.sparkline_in_7d.price.map((price, index) => ({ time: index, price }))}
+                  >
+                    <XAxis dataKey="time" hide />
+                    <YAxis
+                      domain={[
+                        Math.min(...coin.sparkline_in_7d.price),
+                        Math.max(...coin.sparkline_in_7d.price),
+                      ]}
+                      hide
+                    />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="price" stroke="#8884d8" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
             </CardContent>
           </Card>
         ))}
       </div>
+
       <h2 className="text-2xl font-semibold mt-8 mb-4">Cryptocurrency Market Overview</h2>
       <Table>
         <TableHeader>
