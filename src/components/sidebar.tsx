@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // Import usePathname to get current route
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
@@ -9,14 +9,16 @@ import { HomeIcon, Cloud, DollarSign, Newspaper, User, Building, HeartIcon } fro
 
 const Sidebar = () => {
   const router = useRouter();
-  const pathname = usePathname(); // Get the current route
+  const pathname = usePathname();
   const [userName, setUserName] = useState("Profile");
 
   useEffect(() => {
-    // Fetch the user's name from localStorage
-    const savedProfile = JSON.parse(localStorage.getItem("profile"));
-    if (savedProfile && savedProfile.name) {
-      setUserName(savedProfile.name);
+    const storedProfile = localStorage.getItem("profile");
+    if (storedProfile) {
+      const savedProfile = JSON.parse(storedProfile);
+      if (savedProfile && savedProfile.name) {
+        setUserName(savedProfile.name);
+      }
     }
   }, []);
 
@@ -34,7 +36,6 @@ const Sidebar = () => {
           <NavItem href="/cityDetails" icon={<Building size={20} />} label="City Details" active={pathname === "/cityDetails"} />
         </nav>
 
-        {/* Profile Section */}
         <Card
           className={`flex items-center gap-3 p-3 mt-5 cursor-pointer transition ${
             pathname === "/profile" ? "bg-gray-200" : "hover:bg-gray-100"
@@ -49,7 +50,17 @@ const Sidebar = () => {
   );
 };
 
-const NavItem = ({ href, icon, label, active }: { href: string; icon: React.ReactNode; label: string; active: boolean }) => (
+const NavItem = ({
+  href,
+  icon,
+  label,
+  active,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+}) => (
   <Link
     href={href}
     className={`flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 transition ${
