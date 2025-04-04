@@ -224,43 +224,59 @@ const WeatherPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-            {weatherData[city] ? (
+              {weatherData[city] ? (
                 <>
                   <p><strong>Temp:</strong> {weatherData[city].main.temp}°C</p>
                   <p><strong>Humidity:</strong> {weatherData[city].main.humidity}%</p>
                   <p><strong>Condition:</strong> {weatherData[city].weather[0].description}</p>
                 </>
               ) : (
-                <p>Loading weather...</p>
+                <p>Loading...</p>
               )}
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Pie Chart Section */}
-      {selectedCity && weatherData[selectedCity] && (
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 gap-2">
+          {[...Array(totalPages)].map((_, index) => (
+            <Button
+              key={index}
+              variant={index === currentPage ? 'default' : 'outline'}
+              onClick={() => setCurrentPage(index)}
+            >
+              {index + 1}
+            </Button>
+          ))}
+        </div>
+      )}
+
+      {selectedCity && chartData.length > 0 && (
         <div className="mt-10">
-          <h2 className="text-2xl font-semibold mb-4">Weather Breakdown for {selectedCity}</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={chartData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                fill="#8884d8"
-                label
-              >
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
-                ))}
-              </Pie>
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+          <h2 className="text-2xl font-semibold mb-4 text-center">
+            {selectedCity} Weather Breakdown
+          </h2>
+          <div style={{ width: '100%', height: 300 }}>
+            <ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+                  ))}
+                </Pie>
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       )}
     </div>
