@@ -1,8 +1,26 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 // Types
+interface WeatherInfo {
+  name: string;
+  main: {
+    temp: number;
+    feels_like: number;
+    temp_min: number;
+    temp_max: number;
+    humidity: number;
+  };
+  weather: {
+    description: string;
+    icon: string;
+  }[];
+  wind: {
+    speed: number;
+  };
+}
+
 interface WeatherData {
-  [city: string]: any; // You can replace `any` with a specific response shape if you want
+  [city: string]: WeatherInfo;
 }
 
 interface WeatherState {
@@ -22,7 +40,7 @@ export const fetchWeatherData = createAsyncThunk(
   "weather/fetchWeatherData",
   async (city: string) => {
     const response = await fetch(`${WEATHER_BASE_URL}?q=${city}&appid=${WEATHER_API_KEY}&units=metric`);
-    const data = await response.json();
+    const data: WeatherInfo = await response.json();
     return { city, data };
   }
 );
