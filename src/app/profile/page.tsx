@@ -17,22 +17,28 @@ const ProfilePage = () => {
 
   // Load the profile data from localStorage when the component mounts
   useEffect(() => {
-    const savedProfile = JSON.parse(localStorage.getItem("profile"));
-    if (savedProfile) {
-      setProfile(savedProfile);
+    const stored = localStorage.getItem("profile");
+    if (stored) {
+      try {
+        const savedProfile = JSON.parse(stored);
+        setProfile(savedProfile);
+      } catch (err) {
+        console.error("Error parsing saved profile:", err);
+      }
     }
   }, []);
 
-  // Save the profile data to localStorage whenever it changes
-  const handleChange = (e) => {
+  // Update the profile on input change
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const updatedProfile = { ...profile, [e.target.name]: e.target.value };
     setProfile(updatedProfile);
     localStorage.setItem("profile", JSON.stringify(updatedProfile)); // Save to localStorage
   };
 
+  // Toggle edit/save state
   const toggleEdit = () => {
     if (isEditing) {
-      // Save the final profile to localStorage when editing is toggled off
+      // Save final version when toggling off editing
       localStorage.setItem("profile", JSON.stringify(profile));
     }
     setIsEditing(!isEditing);
@@ -63,8 +69,8 @@ const ProfilePage = () => {
               <Input
                 name="email"
                 value={profile.email}
-                onChange={handleChange} // Now editable
-                disabled={!isEditing} // Follows the isEditing toggle
+                onChange={handleChange}
+                disabled={!isEditing}
               />
             </div>
 
