@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Trash, Plus, Heart, Search } from 'lucide-react';
+import { Trash, Plus, Heart, Search, ArrowLeft, ArrowRight } from 'lucide-react';
 import {
   PieChart,
   Pie,
@@ -81,13 +81,11 @@ const WeatherPage = () => {
           const data: WeatherData = await res.json();
           newWeatherData[city] = data;
 
-          if (data.weather) {
-            const imgRes = await fetch(`${PEXELS_BASE_URL}?query=${city} landmark&per_page=1`, {
-              headers: { Authorization: PEXELS_API_KEY },
-            });
-            const imgData: PexelsResponse = await imgRes.json();
-            newBackgrounds[city] = imgData.photos[0]?.src?.large || '';
-          }
+          const imgRes = await fetch(`${PEXELS_BASE_URL}?query=${city} city&per_page=1`, {
+            headers: { Authorization: PEXELS_API_KEY },
+          });
+          const imgData: PexelsResponse = await imgRes.json();
+          newBackgrounds[city] = imgData.photos[0]?.src?.large || '';
         } catch (err) {
           console.error(`Failed to fetch weather for ${city}`, err);
         }
@@ -112,11 +110,7 @@ const WeatherPage = () => {
     try {
       const res = await fetch(`${WEATHER_BASE_URL}?q=${searchQuery}&appid=${WEATHER_API_KEY}&units=metric`);
       const data: WeatherData = await res.json();
-      if (data.cod === 200) {
-        setSearchResult(data);
-      } else {
-        setSearchResult(null);
-      }
+      setSearchResult(data.cod === 200 ? data : null);
     } catch (error) {
       console.error('Error searching city:', error);
     }
@@ -153,7 +147,7 @@ const WeatherPage = () => {
   const pieColors = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d'];
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Weather Dashboard</h1>
         <div className="flex gap-3">
@@ -186,7 +180,7 @@ const WeatherPage = () => {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {paginatedCities.map((city) => (
           <Card key={city} className="shadow-lg cursor-pointer" onClick={() => setSelectedCity(city)}>
             <div
@@ -238,46 +232,47 @@ const WeatherPage = () => {
         ))}
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-center mt-6 gap-2">
-          {[...Array(totalPages)].map((_, index) => (
-            <Button
-              key={index}
-              variant={index === currentPage ? 'default' : 'outline'}
-              onClick={() => setCurrentPage(index)}
-            >
-              {index + 1}
-            </Button>
-          ))}
-        </div>
-      )}
+      <div className="flex justify-center gap-4 mb-6">
+        <Button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))} disabled={currentPage === 0}>
+          <ArrowLeft size={16} /> Prev
+        </Button>
+        <span className="text-lg font-medium">
+          Page {currentPage + 1} of {totalPages}
+        </span>
+        <Button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))}
+          disabled={currentPage === totalPages - 1}
+        >
+          Next <ArrowRight size={16} />
+        </Button>
+      </div>
 
       {selectedCity && chartData.length > 0 && (
-        <div className="mt-10">
-          <h2 className="text-2xl font-semibold mb-4 text-center">
-            {selectedCity} Weather Breakdown
-          </h2>
-          <div style={{ width: '100%', height: 300 }}>
-            <ResponsiveContainer>
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>Weather Stats for {selectedCity}</CardTitle>
+          </CardHeader>
+          <CardContent style={{ height: '300px' }}>
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={chartData}
                   dataKey="value"
-                  nameKey="name"
+                  isAnimationActive
+                  data={chartData}
                   cx="50%"
                   cy="50%"
                   outerRadius={100}
                   label
                 >
-                  {chartData.map((entry, index) => (
+                  {chartData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
                   ))}
                 </Pie>
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
