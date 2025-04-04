@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 
+// OpenWeatherMap API URLs
 const WEATHER_API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
 const WEATHER_HISTORY_API = "https://api.openweathermap.org/data/2.5/onecall";
 const WEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
@@ -16,11 +17,35 @@ interface CityWeatherDetailsProps {
   };
 }
 
+interface WeatherData {
+  main: {
+    temp: number;
+    humidity: number;
+    pressure: number;
+  };
+  weather: {
+    description: string;
+  }[];
+  wind: {
+    speed: number;
+  };
+  visibility: number;
+  coord: {
+    lat: number;
+    lon: number;
+  };
+}
+
+interface HourlyWeather {
+  temp: number;
+  dt: number;
+}
+
 const CityWeatherDetails = ({ params }: CityWeatherDetailsProps) => {
   const { city } = params;
   const router = useRouter();
-  const [weatherData, setWeatherData] = useState<any>(null);
-  const [historyData, setHistoryData] = useState<any[]>([]);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [historyData, setHistoryData] = useState<HourlyWeather[]>([]);
 
   useEffect(() => {
     const fetchWeatherData = async () => {
