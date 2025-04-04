@@ -1,83 +1,124 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash, Plus, Heart, Search } from "lucide-react"; // Added Heart icon
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { PieChart, Pie, Cell, Legend } from "recharts";
+import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Trash, Plus, Heart, Search } from 'lucide-react';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
-const WEATHER_API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
-const PEXELS_API_KEY = process.env.NEXT_PUBLIC_PEXELS_API_KEY;
-const WEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
-const PEXELS_BASE_URL = "https://api.pexels.com/v1/search";
+const WEATHER_API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY!;
+const PEXELS_API_KEY = process.env.NEXT_PUBLIC_PEXELS_API_KEY!;
+const WEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
+const PEXELS_BASE_URL = 'https://api.pexels.com/v1/search';
+
+interface WeatherData {
+  name: string;
+  main: {
+    temp: number;
+    humidity: number;
+    pressure: number;
+  };
+  weather: {
+    description: string;
+  }[];
+  wind: {
+    speed: number;
+  };
+  cod: number;
+}
+
+interface PexelsPhoto {
+  src: {
+    large: string;
+  };
+}
+
+interface PexelsResponse {
+  photos: PexelsPhoto[];
+}
 
 const WeatherPage = () => {
-  const [cities, setCities] = useState(() => {
-    const savedCities = localStorage.getItem("cities");
-    return savedCities ? JSON.parse(savedCities) : ["Delhi", "London", "Tokyo"];
+  const [cities, setCities] = useState<string[]>(() => {
+    const saved = localStorage.getItem('cities');
+    return saved ? JSON.parse(saved) : ['Delhi', 'London', 'Tokyo'];
   });
 
-  const [weatherData, setWeatherData] = useState({});
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResult, setSearchResult] = useState(null);
-  const [backgroundImages, setBackgroundImages] = useState({});
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [favorites, setFavorites] = useState(() => {
-    const savedFavorites = localStorage.getItem("favorites");
-    return savedFavorites ? JSON.parse(savedFavorites) : [];
-  }); // State for favorite cities
-  const [currentPage, setCurrentPage] = useState(0); // For pagination
+  const [weatherData, setWeatherData] = useState<Record<string, WeatherData>>({});
+  const [backgroundImages, setBackgroundImages] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResult, setSearchResult] = useState<WeatherData | null>(null);
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    const saved = localStorage.getItem('favorites');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const citiesPerPage = 4; // Number of cities per page
+  const citiesPerPage = 4;
+  const totalPages = Math.ceil(cities.length / citiesPerPage);
+  const paginatedCities = cities.slice(currentPage * citiesPerPage, (currentPage + 1) * citiesPerPage);
 
   useEffect(() => {
     const fetchWeather = async () => {
-      const newWeatherData = {};
-      const newBackgrounds = {};
+      const newWeatherData: Record<string, WeatherData> = {};
+      const newBackgrounds: Record<string, string> = {};
+
       for (const city of cities) {
         try {
           const res = await fetch(`${WEATHER_BASE_URL}?q=${city}&appid=${WEATHER_API_KEY}&units=metric`);
-          const data = await res.json();
+          const data: WeatherData = await res.json();
           newWeatherData[city] = data;
-          
+
           if (data.weather) {
             const imgRes = await fetch(`${PEXELS_BASE_URL}?query=${city} landmark&per_page=1`, {
               headers: { Authorization: PEXELS_API_KEY },
             });
-            const imgData = await imgRes.json();
-            newBackgrounds[city] = imgData.photos[0]?.src?.large || "";
+            const imgData: PexelsResponse = await imgRes.json();
+            newBackgrounds[city] = imgData.photos[0]?.src?.large || '';
           }
-        } catch (error) {
-          console.error("Error fetching weather data:", error);
+        } catch (err) {
+          console.error(`Failed to fetch weather for ${city}`, err);
         }
       }
+
       setWeatherData(newWeatherData);
       setBackgroundImages(newBackgrounds);
     };
+
     fetchWeather();
   }, [cities]);
 
   useEffect(() => {
-    localStorage.setItem("cities", JSON.stringify(cities));
+    localStorage.setItem('cities', JSON.stringify(cities));
   }, [cities]);
 
   useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
+    localStorage.setItem('favorites', JSON.stringify(favorites));
   }, [favorites]);
 
   const handleSearch = async () => {
     try {
       const res = await fetch(`${WEATHER_BASE_URL}?q=${searchQuery}&appid=${WEATHER_API_KEY}&units=metric`);
-      const data = await res.json();
+      const data: WeatherData = await res.json();
       if (data.cod === 200) {
         setSearchResult(data);
       } else {
         setSearchResult(null);
       }
     } catch (error) {
-      console.error("Error searching city:", error);
+      console.error('Error searching city:', error);
     }
   };
 
@@ -85,35 +126,31 @@ const WeatherPage = () => {
     if (searchResult && !cities.includes(searchResult.name)) {
       setCities([...cities, searchResult.name]);
       setSearchResult(null);
-      setSearchQuery("");
+      setSearchQuery('');
     }
   };
 
-  const removeCity = (city) => {
+  const removeCity = (city: string) => {
     setCities(cities.filter((c) => c !== city));
   };
 
-  const addFavorite = (city) => {
+  const addFavorite = (city: string) => {
     if (!favorites.includes(city)) {
       setFavorites([...favorites, city]);
     }
   };
 
-  const chartData = selectedCity && weatherData[selectedCity] ? [
-    { name: "Temperature", value: weatherData[selectedCity].main.temp },
-    { name: "Humidity", value: weatherData[selectedCity].main.humidity },
-    { name: "Wind Speed", value: weatherData[selectedCity].wind.speed },
-    { name: "Pressure", value: weatherData[selectedCity].main.pressure },
-  ] : [];
+  const chartData =
+    selectedCity && weatherData[selectedCity]
+      ? [
+          { name: 'Temperature', value: weatherData[selectedCity].main.temp },
+          { name: 'Humidity', value: weatherData[selectedCity].main.humidity },
+          { name: 'Wind Speed', value: weatherData[selectedCity].wind.speed },
+          { name: 'Pressure', value: weatherData[selectedCity].main.pressure },
+        ]
+      : [];
 
-  const pieColors = ["#8884d8", "#83a6ed", "#8dd1e1", "#82ca9d"];
-
-  // Pagination logic
-  const totalPages = Math.ceil(cities.length / citiesPerPage);
-  const paginatedCities = cities.slice(
-    currentPage * citiesPerPage,
-    (currentPage + 1) * citiesPerPage
-  );
+  const pieColors = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d'];
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -124,9 +161,8 @@ const WeatherPage = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search for a city..."
-            className="flex-grow w-fit"
           />
-          <Button onClick={handleSearch} className="flex items-center">
+          <Button onClick={handleSearch}>
             <Search className="mr-2" size={16} /> Search
           </Button>
         </div>
@@ -150,94 +186,91 @@ const WeatherPage = () => {
         </Card>
       )}
 
-      {/* Pagination for city cards */}
-      <div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {paginatedCities.map((city) => (
-            <Card key={city} className="shadow-lg cursor-pointer text-black font-bold" onClick={() => setSelectedCity(city)}>
-              <div className="relative h-40 w-full bg-cover bg-center" style={{ backgroundImage: `url(${backgroundImages[city]})` }}></div>
-              <CardHeader>
-                <CardTitle className="flex justify-between items-center">
-                  {city}
-                  <div className="flex gap-2">
-                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeCity(city); }}>
-                      <Trash size={16} />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); addFavorite(city); }}>
-                      <Heart size={16} className={favorites.includes(city) ? "text-red-500" : "text-gray-500"} />
-                    </Button>
-                  </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {weatherData[city] ? (
-                  <>
-                    <p><strong>Temperature:</strong> {weatherData[city].main.temp}°C</p>
-                    <p><strong>Humidity:</strong> {weatherData[city].main.humidity}%</p>
-                    <p><strong>Condition:</strong> {weatherData[city].weather[0].description}</p>
-                  </>
-                ) : (
-                  <p>Loading...</p>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-       {/* Pagination dots */}
-        <div className="flex justify-center mt-4">
-          {Array.from({ length: totalPages }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentPage(index)}
-              className={`h-3 w-3 rounded-full mx-1 ${
-                index === currentPage ? "bg-black" : "bg-gray-300"
-              }`}
-            ></button>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {paginatedCities.map((city) => (
+          <Card key={city} className="shadow-lg cursor-pointer" onClick={() => setSelectedCity(city)}>
+            <div
+              className="relative h-40 w-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${backgroundImages[city]})` }}
+            />
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                {city}
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeCity(city);
+                    }}
+                  >
+                    <Trash size={16} />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addFavorite(city);
+                    }}
+                  >
+                    <Heart
+                      size={16}
+                      className={favorites.includes(city) ? 'text-red-500' : 'text-gray-500'}
+                    />
+                  </Button>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {weatherData[city] ? (
+                <>
+                  <p><strong>Temp:</strong> {weatherData[city].main.temp}°C</p>
+                  <p><strong>Humidity:</strong> {weatherData[city].main.humidity}%</p>
+                  <p><strong>Condition:</strong> {weatherData[city].weather[0].description}</p>
+                </>
+              ) : (
+                <p>Loading...</p>
+              )}
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {selectedCity && weatherData[selectedCity] && (
-        <div className="mt-8 p-6 bg-gray-100 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4">{selectedCity} - Detailed Weather</h2>
-          <div className="mb-6">
-            <p><strong>Temperature:</strong> {weatherData[selectedCity].main.temp}°C</p>
-            <p><strong>Humidity:</strong> {weatherData[selectedCity].main.humidity}%</p>
-            <p><strong>Condition:</strong> {weatherData[selectedCity].weather[0].description}</p>
-            <p><strong>Wind Speed:</strong> {weatherData[selectedCity].wind.speed} m/s</p>
-            <p><strong>Pressure:</strong> {weatherData[selectedCity].main.pressure} hPa</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={chartData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={chartData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  fill="#8884d8"
-                  label
-                >
-                  {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
-                  ))}
-                </Pie>
-                <Legend />
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+      {selectedCity && chartData.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-xl font-semibold mb-4">{selectedCity} Weather Stats</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={chartData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                label
+              >
+                {chartData.map((_, i) => (
+                  <Cell key={`cell-${i}`} fill={pieColors[i % pieColors.length]} />
+                ))}
+              </Pie>
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {/* Pagination controls */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center gap-3">
+          <Button disabled={currentPage === 0} onClick={() => setCurrentPage((p) => p - 1)}>
+            Prev
+          </Button>
+          <Button disabled={currentPage === totalPages - 1} onClick={() => setCurrentPage((p) => p + 1)}>
+            Next
+          </Button>
         </div>
       )}
     </div>
