@@ -10,11 +10,17 @@ const WEATHER_API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
 const WEATHER_HISTORY_API = "https://api.openweathermap.org/data/2.5/onecall";
 const WEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
 
-const CityWeatherDetails = ({ params }) => {
+interface CityWeatherDetailsProps {
+  params: {
+    city: string;
+  };
+}
+
+const CityWeatherDetails = ({ params }: CityWeatherDetailsProps) => {
   const { city } = params;
   const router = useRouter();
-  const [weatherData, setWeatherData] = useState(null);
-  const [historyData, setHistoryData] = useState([]);
+  const [weatherData, setWeatherData] = useState<any>(null);
+  const [historyData, setHistoryData] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -30,7 +36,7 @@ const CityWeatherDetails = ({ params }) => {
       }
     };
 
-    const fetchWeatherHistory = async (lat, lon) => {
+    const fetchWeatherHistory = async (lat: number, lon: number) => {
       try {
         const res = await fetch(`${WEATHER_HISTORY_API}?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`);
         const data = await res.json();
@@ -57,7 +63,10 @@ const CityWeatherDetails = ({ params }) => {
 
   return (
     <div className="max-w-4xl mx-auto py-6">
-      <button className="mb-4 text-blue-600 underline" onClick={() => router.back()}>Go Back</button>
+      <button className="mb-4 text-blue-600 underline" onClick={() => router.back()}>
+        Go Back
+      </button>
+
       {weatherData ? (
         <Card className="shadow-md p-4">
           <CardHeader>
