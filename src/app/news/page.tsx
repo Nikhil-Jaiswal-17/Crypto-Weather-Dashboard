@@ -56,7 +56,7 @@ const NEWS_API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&q=cryptoc
           ? Array(6).fill(0).map((_, i) => <Skeleton key={i} className="h-56 w-full" />)
           : news.map((article, index) => (
               <Card key={index} className="shadow-md overflow-hidden">
-                {article.image_url && ( // 👈 Ab yeh error nahi dega kyunki type define hai
+                {article.image_url && ( 
                   <img src={article.image_url} alt={article.title} className="w-full h-64 object-cover" />
                 )}
                 <CardHeader>
