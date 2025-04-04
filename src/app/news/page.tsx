@@ -8,7 +8,7 @@
 8   const API_KEY = process.env.NEXT_PUBLIC_NEWS_API_KEY;
 9   const NEWS_API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&q=cryptocurrency&category=business&language=en`;
 10  
-11  // 👇 Yeh naya type define karo taaki TypeScript ko samajh aaye news article mein kya kya hoga
+11  
 12  type NewsArticle = {
 13    title: string;
 14    link: string;
@@ -17,7 +17,7 @@
 17    pubDate: string;
 18  };
 19  
-20  // 👇 useState mein type specify karo warna TypeScript 'never' maan raha
+20
 21  const [news, setNews] = useState<NewsArticle[]>([]);
 22  const [loading, setLoading] = useState(true);
 23  const [refreshing, setRefreshing] = useState(false);
