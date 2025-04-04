@@ -76,6 +76,5 @@ const NEWS_API_URL = `https://newsdata.io/api/1/news?apikey=${API_KEY}&q=cryptoc
       </div>
     </div>
   );
-  };
   
   export default CryptoNews;
