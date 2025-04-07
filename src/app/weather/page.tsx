@@ -50,25 +50,38 @@ interface PexelsResponse {
 }
 
 const WeatherPage = () => {
-  const [cities, setCities] = useState<string[]>(() => {
-    const saved = localStorage.getItem('cities');
-    return saved ? JSON.parse(saved) : ['Delhi', 'London', 'Tokyo'];
-  });
-
+  const [cities, setCities] = useState<string[]>(['Delhi', 'London', 'Tokyo']);
   const [weatherData, setWeatherData] = useState<Record<string, WeatherData>>({});
   const [backgroundImages, setBackgroundImages] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState<WeatherData | null>(null);
-  const [favorites, setFavorites] = useState<string[]>(() => {
-    const saved = localStorage.getItem('favorites');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [favorites, setFavorites] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isClient, setIsClient] = useState(false);
 
   const citiesPerPage = 4;
   const totalPages = Math.ceil(cities.length / citiesPerPage);
   const paginatedCities = cities.slice(currentPage * citiesPerPage, (currentPage + 1) * citiesPerPage);
+
+  // Check if we're running on client-side and load from localStorage
+  useEffect(() => {
+    setIsClient(true);
+    
+    // Load saved data from localStorage only on client side
+    if (typeof window !== 'undefined') {
+      const savedCities = localStorage.getItem('cities');
+      const savedFavorites = localStorage.getItem('favorites');
+      
+      if (savedCities) {
+        setCities(JSON.parse(savedCities));
+      }
+      
+      if (savedFavorites) {
+        setFavorites(JSON.parse(savedFavorites));
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -95,16 +108,23 @@ const WeatherPage = () => {
       setBackgroundImages(newBackgrounds);
     };
 
-    fetchWeather();
+    if (cities.length > 0) {
+      fetchWeather();
+    }
   }, [cities]);
 
+  // Save to localStorage only when on client-side
   useEffect(() => {
-    localStorage.setItem('cities', JSON.stringify(cities));
-  }, [cities]);
+    if (isClient && typeof window !== 'undefined') {
+      localStorage.setItem('cities', JSON.stringify(cities));
+    }
+  }, [cities, isClient]);
 
   useEffect(() => {
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  }, [favorites]);
+    if (isClient && typeof window !== 'undefined') {
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
+  }, [favorites, isClient]);
 
   const handleSearch = async () => {
     try {
