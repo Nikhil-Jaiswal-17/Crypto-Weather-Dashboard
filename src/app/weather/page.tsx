@@ -17,6 +17,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import dynamic from 'next/dynamic';
 
 const WEATHER_API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY!;
 const PEXELS_API_KEY = process.env.NEXT_PUBLIC_PEXELS_API_KEY!;
@@ -49,39 +50,33 @@ interface PexelsResponse {
   photos: PexelsPhoto[];
 }
 
-const WeatherPage = () => {
-  const [cities, setCities] = useState<string[]>(['Delhi', 'London', 'Tokyo']);
+// Create a wrapper component that will use localStorage
+const WeatherPageClient = () => {
+  const [cities, setCities] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('cities');
+      return saved ? JSON.parse(saved) : ['Delhi', 'London', 'Tokyo'];
+    }
+    return ['Delhi', 'London', 'Tokyo'];
+  });
+
   const [weatherData, setWeatherData] = useState<Record<string, WeatherData>>({});
   const [backgroundImages, setBackgroundImages] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState<WeatherData | null>(null);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('favorites');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [isClient, setIsClient] = useState(false);
 
   const citiesPerPage = 4;
   const totalPages = Math.ceil(cities.length / citiesPerPage);
   const paginatedCities = cities.slice(currentPage * citiesPerPage, (currentPage + 1) * citiesPerPage);
-
-  // Check if we're running on client-side and load from localStorage
-  useEffect(() => {
-    setIsClient(true);
-    
-    // Load saved data from localStorage only on client side
-    if (typeof window !== 'undefined') {
-      const savedCities = localStorage.getItem('cities');
-      const savedFavorites = localStorage.getItem('favorites');
-      
-      if (savedCities) {
-        setCities(JSON.parse(savedCities));
-      }
-      
-      if (savedFavorites) {
-        setFavorites(JSON.parse(savedFavorites));
-      }
-    }
-  }, []);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -108,23 +103,20 @@ const WeatherPage = () => {
       setBackgroundImages(newBackgrounds);
     };
 
-    if (cities.length > 0) {
-      fetchWeather();
+    fetchWeather();
+  }, [cities]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cities', JSON.stringify(cities));
     }
   }, [cities]);
 
-  // Save to localStorage only when on client-side
   useEffect(() => {
-    if (isClient && typeof window !== 'undefined') {
-      localStorage.setItem('cities', JSON.stringify(cities));
-    }
-  }, [cities, isClient]);
-
-  useEffect(() => {
-    if (isClient && typeof window !== 'undefined') {
+    if (typeof window !== 'undefined') {
       localStorage.setItem('favorites', JSON.stringify(favorites));
     }
-  }, [favorites, isClient]);
+  }, [favorites]);
 
   const handleSearch = async () => {
     try {
@@ -297,5 +289,8 @@ const WeatherPage = () => {
     </div>
   );
 };
+
+// Use dynamic import with ssr:false to disable server-side rendering for this component
+const WeatherPage = dynamic(() => Promise.resolve(WeatherPageClient), { ssr: false });
 
 export default WeatherPage;
